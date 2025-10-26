@@ -38,7 +38,7 @@ def loadImageAsGrid(image_path):
 
     start = tuple(map(int, green_coords.mean(axis=0)[0]))  # (x, y)
     goal = tuple(map(int, blue_coords.mean(axis=0)[0]))
-    start = (start[1], start[0])  # row, col
+    start = (start[1], start[0])
     goal = (goal[1], goal[0])
 
     return maze, start, goal
@@ -52,6 +52,7 @@ def manhattanDistance(point1, point2):
   return val
 
 def astarPathfinding(grid, start, goal):
+    nodes = 0
     rows, cols = grid.shape
     open_list = []
     g_score = {start: 0}
@@ -63,7 +64,8 @@ def astarPathfinding(grid, start, goal):
         _, current, path = heapq.heappop(open_list)
 
         if current == goal:
-            return path  # Found path
+            print("Number of nodes explored :",nodes)
+            return path
 
         row, col = current
         directions = [(-1,0), (1,0), (0,-1), (0,1)]
@@ -79,6 +81,7 @@ def astarPathfinding(grid, start, goal):
             tentative_g = g_score[current] + 1
 
             neighbor = (nr, nc)
+            nodes += 1
 
             if tentative_g < g_score.get(neighbor, float('inf')):
                 g_score[neighbor] = tentative_g
@@ -106,10 +109,8 @@ if path:
     cv2.circle(image, (start[1], start[0]), 5, (0, 255, 0), -1)
     cv2.circle(image, (goal[1], goal[0]), 5, (255, 0, 0), -1)
     cv2.imshow("solvedimg",image)
-    cv2.imshow("solvedimg",image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    cv2.imwrite("maze_path_output.png", image)
     print("Path length :",len(path))
 
 else:
